@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main-Class: nullReWriter.NullReWriter
+Class-Path: asm-3.1.jar

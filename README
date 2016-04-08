@@ -1,0 +1,26 @@
+--Building--
+
+1. Set the variables as approprriate in Makefile.inc
+	a. ASMJAR must point at the jar for ASM
+	b. Java path should point to a jre
+	c. INSTALL_DIR is where the resulting binaries will end up.
+	d. You probably won't need to change any other options, but this is still beta software...  :)
+
+2. make; make install; 
+        
+        Now the binaries will be wherever you set INSTALL_DIR
+ 
+--Running--
+
+1. Be sure that libElephantTracks.so and libHashGraph.so are in a directory in the LD_LIBRARY_PATH  (they will be located in INSTALL_DIR)
+2. Run java with some complicated paramters:
+
+
+java -Xbootclasspath/a:<INSTALL_DIR> -agentlib:ElephantTracks=javaPath=<path to Java>`:outputFile=<Output File>:classReWriter=<INSTALL_DIR>/elephantTracksRewriter.jar
+
+       The program trace will be in <Output File>.  Doing the tracing will slow down program execution considerably; on the order of 500-1000 times slower.
+
+
+
+
+

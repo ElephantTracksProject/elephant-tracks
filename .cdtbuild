@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?fileVersion 3.1.0?>
+
+<ManagedProjectBuildInfo>
+<project id="mearthAgent2.cdt.managedbuild.target.gnu.so.766746749" name="Shared Library (Gnu)" projectType="cdt.managedbuild.target.gnu.so">
+<configuration artifactExtension="so" artifactName="mearthAgent2" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser" id="cdt.managedbuild.config.gnu.so.debug.1954260801" name="Debug" parent="cdt.managedbuild.config.gnu.so.debug">
+<toolChain id="cdt.managedbuild.toolchain.gnu.so.debug.1707140488" name="GCC Tool Chain" superClass="cdt.managedbuild.toolchain.gnu.so.debug">
+<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.so.debug.753390125" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.so.debug">
+<option id="gnu.cpp.compiler.option.include.paths.1375867458" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+<listOptionValue builtIn="false" value="/opt/jdk1.6.0_13/include"/>
+<listOptionValue builtIn="false" value="/usr/include"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/mearthAgent2/java_crw_demo}&quot;"/>
+<listOptionValue builtIn="false" value="/opt/jdk1.6.0_13/include/linux"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/mearthAgent2/agent_util}&quot;"/>
+</option>
+</tool>
+<tool id="cdt.managedbuild.tool.gnu.c.compiler.so.debug.1278616866" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.so.debug">
+<option id="gnu.c.compiler.option.include.paths.617862150" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/mearthAgent2/agent_util}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/mearthAgent2/java_crw_demo}&quot;"/>
+<listOptionValue builtIn="false" value="/opt/jdk1.6.0_13/include/linux"/>
+<listOptionValue builtIn="false" value="/opt/jdk1.6.0_13/include"/>
+</option>
+</tool>
+<tool id="cdt.managedbuild.tool.gnu.c.linker.so.debug.549240601" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.so.debug"/>
+<tool id="cdt.managedbuild.tool.gnu.cpp.linker.so.debug.1955925894" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.so.debug"/>
+<tool id="cdt.managedbuild.tool.gnu.assembler.so.debug.595992420" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.so.debug"/>
+<macros/>
+</toolChain>
+</configuration>
+<configuration artifactExtension="so" artifactName="mearthAgent2" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser" id="cdt.managedbuild.config.gnu.so.release.1043379923" name="Release" parent="cdt.managedbuild.config.gnu.so.release">
+<toolChain id="cdt.managedbuild.toolchain.gnu.so.release.1021968474" name="GCC Tool Chain" superClass="cdt.managedbuild.toolchain.gnu.so.release">
+<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.so.release.684619768" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.so.release">
+<option id="gnu.cpp.compiler.option.include.paths.2048734174" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+<listOptionValue builtIn="false" value="/opt/jdk1.6.0_13/include"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/mearthAgent2/agent_util}&quot;"/>
+<listOptionValue builtIn="false" value="/opt/jdk1.6.0_13/include/linux"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/mearthAgent2/java_crw_demo}&quot;"/>
+<listOptionValue builtIn="false" value="/usr/include"/>
+</option>
+</tool>
+<tool id="cdt.managedbuild.tool.gnu.c.compiler.so.release.246729570" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.so.release">
+<option id="gnu.c.compiler.option.include.paths.171196887" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/mearthAgent2/agent_util}&quot;"/>
+<listOptionValue builtIn="false" value="/opt/jdk1.6.0_13/include"/>
+<listOptionValue builtIn="false" value="/opt/jdk1.6.0_13/include/linux"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/mearthAgent2/java_crw_demo}&quot;"/>
+</option>
+</tool>
+<tool id="cdt.managedbuild.tool.gnu.c.linker.so.release.1556062380" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.so.release"/>
+<tool id="cdt.managedbuild.tool.gnu.cpp.linker.so.release.947147045" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.so.release"/>
+<tool id="cdt.managedbuild.tool.gnu.assembler.so.release.33069332" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.so.release"/>
+<macros/>
+</toolChain>
+</configuration>
+<macros/>
+</project>
+</ManagedProjectBuildInfo>
