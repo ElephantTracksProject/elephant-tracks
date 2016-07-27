@@ -9,6 +9,9 @@
 #include <GraphAlgorithms.h>
 #include <assert.h>
 #include <sstream>
+#include <limits>
+#include <cstddef>
+
 #include "ETCallBackHandler.h"
 #include "FlatTraceOutputter.h"
 #include "main.h"
@@ -403,11 +406,11 @@ void ETCallBackHandler::timeStampTag (jlong tag, jlong thread_tag) {
   ///Time stamping null doesn't make sense, ignore it.
   // Maybe we should tell the caller not to do this?
   if (tag != 0) {
-    tagTimeMap[tag] = (TimeStamp){this->currentTime, thread_tag};
+      tagTimeMap[tag] = TimeStamp(this->currentTime, thread_tag);
   }
   IF_TIMING( \
-    time.stop(); \
-    timeStampTag_time += time.getElapsedTime(); \
+      time.stop(); \
+      timeStampTag_time += time.getElapsedTime(); \
   );
 }
 
@@ -1132,7 +1135,8 @@ void ETCallBackHandler::computeObjectDeathTimes () {
   HL::Timer timer;
 
   IF_TIMING (timer.start());
-  TimeStamp lastTime = (TimeStamp){-1L, 0}; // This assumes two's complement to find max long.
+  // TODO TimeStamp lastTime = (TimeStamp){-1L, 0}; // This assumes two's complement to find max long.
+  TimeStamp lastTime(std::numeric_limits<int>::max(), 0);
   set<jlong> completed;
 
   vector<jlong> unreachableStack;
@@ -1495,23 +1499,25 @@ void instSetObjectField (JNIEnv *jni, jobject obj, jfieldID fieldId, jobject new
 }
 
 void instSetObjectArrayElement (JNIEnv *jni, jobjectArray array, jsize index, jobject newVal) {
-  if (!origJNIEnv->IsSameObject(jni, array, NULL)) {
-    jsize len = origJNIEnv->GetArrayLength(jni, array);
-    if (((unsigned)index) < len) {
-      jclass oclass = origJNIEnv->GetObjectClass(jni, array);
-      origJNIEnv->SetObjectArrayElement(jni, array, index, newVal);
-      if (!jni->ExceptionCheck()) {  // do not log if the update fails
-        jthread thread;
-        jvmtiError err = theJVMTI->GetCurrentThread(&thread);
-        check_jvmti_error(theJVMTI, err, "ETCallBackHandler::instSetObjectArrayElementi:: Could not GetCurrentThread");
-        // TODO: check error code
-        cbHandler->nativePointerUpdated(jni, oclass, thread, array, newVal, index);
-      }
-      return;
+    if (!origJNIEnv->IsSameObject(jni, array, NULL)) {
+        jsize len = origJNIEnv->GetArrayLength(jni, array);
+        // if (((unsigned)index) < len) {
+        // TODO: So why exactly are we casting to unsigned here?
+        if (index < len) {
+            jclass oclass = origJNIEnv->GetObjectClass(jni, array);
+            origJNIEnv->SetObjectArrayElement(jni, array, index, newVal);
+            if (!jni->ExceptionCheck()) {  // do not log if the update fails
+                jthread thread;
+                jvmtiError err = theJVMTI->GetCurrentThread(&thread);
+                check_jvmti_error(theJVMTI, err, "ETCallBackHandler::instSetObjectArrayElementi:: Could not GetCurrentThread");
+                // TODO: check error code
+                cbHandler->nativePointerUpdated(jni, oclass, thread, array, newVal, index);
+            }
+            return;
+        }
     }
-  }
-  // line below will always fail, but we need to have it fail since it would have before
-  origJNIEnv->SetObjectArrayElement(jni, array, index, newVal);
+    // line below will always fail, but we need to have it fail since it would have before
+    origJNIEnv->SetObjectArrayElement(jni, array, index, newVal);
 }
 
 // jobjectArray NewObjectArray (JNIEnv* jni, jsize length, jclass elementClass, jobject initialElement)
