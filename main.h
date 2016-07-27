@@ -14,7 +14,12 @@ using namespace std;
 class ETCallBackHandler;
 
 // our phase values (not the same as the JVMTI_PHASE constants!)
-typedef enum phase { PHASE_ONLOAD, PHASE_START, PHASE_LIVE, PHASE_DEAD } Phase;
+enum class Phase {
+    ONLOAD = 0,
+    START = 1,
+    LIVE = 2,
+    DEAD = 3
+};
 
 // kinds of allocation records
 typedef enum allocKind {

@@ -67,7 +67,7 @@ void exit_critical_section (jvmtiEnv *jvmti) {
 
 void setCallbacks (jvmtiEnv *jvmti);
 static ClassInstrumenter* instrumenter;
-static Phase vmInitialized = PHASE_ONLOAD;
+static Phase vmInitialized = Phase::ONLOAD;
 
 void instrumentClass (jvmtiEnv *jvmti,
                       JNIEnv* env,
@@ -112,7 +112,7 @@ static void nativePointerUpdated (JNIEnv *env,
                                   jobject origin,
                                   jobject newTarget,
                                   jint fieldId) {
-  if (vmInitialized == PHASE_LIVE) {
+  if (vmInitialized == Phase::LIVE) {
     jthread thread = cbHandler->getCurrentThread();
     cbHandler->nativePointerUpdated(env, klass, thread, origin, newTarget, fieldId);
   }
@@ -123,7 +123,7 @@ static void nativePointerUpdated2 (JNIEnv *env,
                                    jobject origin,
                                    jobject newTarget,
                                    jlong offset) {
-  if (vmInitialized == PHASE_LIVE) {
+  if (vmInitialized == Phase::LIVE) {
     jthread thread = cbHandler->getCurrentThread();
     cbHandler->nativePointerUpdated(env, klass, thread, origin, newTarget, offset);
   }
@@ -133,7 +133,7 @@ static void nativeReferentUpdated (JNIEnv *env,
                                    jclass klass,
                                    jobject obj,
                                    jobject referent) {
-  if (vmInitialized == PHASE_LIVE) {
+  if (vmInitialized == Phase::LIVE) {
     jthread thread = cbHandler->getCurrentThread();
     cbHandler->nativePointerUpdated(env, klass, thread, obj, referent, referentFieldNumber);
   }
@@ -144,7 +144,7 @@ static void nativeArrayStore (JNIEnv *jni,
                               jobject array,
                               jint index,
                               jobject storee) {
-  if (vmInitialized == PHASE_LIVE) {
+  if (vmInitialized == Phase::LIVE) {
     jthread thread = cbHandler->getCurrentThread();
     cbHandler->nativeArrayStore(jni, klass, thread, array, index, storee);
   }
@@ -198,7 +198,7 @@ void nativeMethodEntry (JNIEnv *jni,
                         jint methodId,
                         jobject receiver,
                         jboolean isStatic) {
-  if (vmInitialized == PHASE_LIVE) {
+  if (vmInitialized == Phase::LIVE) {
     jthread thread = cbHandler->getCurrentThread();
     if ((!isStatic) && jni->IsSameObject(receiver, NULL)) {
       jvmtiError err = cachedJvmti->GetLocalObject(thread, (jint)2, (jint)0, &receiver);
@@ -214,7 +214,7 @@ void nativeMethodExit (JNIEnv *jni,
                        jint methodId,
                        jobject receiver,
                        jboolean isStatic) {
-  if (vmInitialized == PHASE_LIVE) {
+  if (vmInitialized == Phase::LIVE) {
     jthread thread = cbHandler->getCurrentThread();
     if ((!isStatic) && jni->IsSameObject(receiver, NULL)) {
       jvmtiError err = cachedJvmti->GetLocalObject(thread, (jint)2, (jint)0, &receiver);
@@ -230,7 +230,7 @@ void nativeExceptionThrow (JNIEnv *jni,
                            jint methodId,
                            jobject receiver,
                            jboolean isStatic) {
-  if (vmInitialized >= PHASE_LIVE) {
+  if (vmInitialized >= Phase::LIVE) {
     jthread thread = cbHandler->getCurrentThread();
     if ((!isStatic) && jni->IsSameObject(receiver, NULL)) {
       jvmtiError err = cachedJvmti->GetLocalObject(thread, (jint)2, (jint)0, &receiver);
@@ -246,7 +246,7 @@ void nativeExceptionHandle (JNIEnv *jni,
                             jint methodId,
                             jobject receiver,
                             jboolean isStatic) {
-  if (vmInitialized >= PHASE_LIVE) {
+  if (vmInitialized >= Phase::LIVE) {
     jthread thread = cbHandler->getCurrentThread();
     if ((!isStatic) && jni->IsSameObject(receiver, NULL)) {
       jvmtiError err = cachedJvmti->GetLocalObject(thread, (jint)2, (jint)0, &receiver);
@@ -270,7 +270,7 @@ void nativeVarEvent (JNIEnv *jni,
                      jobject o2,
                      jobject o3,
                      jobject o4) {
-  if (vmInitialized == PHASE_LIVE) {
+  if (vmInitialized == Phase::LIVE) {
     cbHandler->nativeVarEvent(jni, klass, numObjs, o0, o1, o2, o3, o4);
   }
 }
@@ -279,7 +279,7 @@ void nativeRecordStaticFieldBase (JNIEnv *jni,
                                   jclass klass,
                                   jobject base,
                                   jobject field) {
-  if (vmInitialized == PHASE_LIVE) {
+  if (vmInitialized == Phase::LIVE) {
     cbHandler->nativeRecordStaticFieldBase(jni, klass, base, field);
   }
 }
@@ -288,7 +288,7 @@ void nativeRecordStaticFieldOffset (JNIEnv *jni,
                                     jclass klass,
                                     jlong offset,
                                     jobject field) {
-  if (vmInitialized == PHASE_LIVE) {
+  if (vmInitialized == Phase::LIVE) {
     cbHandler->nativeRecordStaticFieldOffset(jni, klass, offset, field);
   }
 }
@@ -297,7 +297,7 @@ void nativeRecordObjectFieldOffset (JNIEnv *jni,
                                     jclass klass,
                                     jlong offset,
                                     jobject field) {
-  if (vmInitialized == PHASE_LIVE) {
+  if (vmInitialized == Phase::LIVE) {
     cbHandler->nativeRecordObjectFieldOffset(jni, klass, offset, field);
   }
 }
@@ -306,7 +306,7 @@ void nativeRecordArrayBaseOffset (JNIEnv *jni,
                                   jclass klass,
                                   jint offset,
                                   jclass arrayClass) {
-  if (vmInitialized == PHASE_LIVE) {
+  if (vmInitialized == Phase::LIVE) {
     cbHandler->nativeRecordArrayBaseOffset(jni, klass, offset, arrayClass);
   }
 }
@@ -315,7 +315,7 @@ void nativeRecordArrayIndexScale (JNIEnv *jni,
                                   jclass klass,
                                   jint scale,
                                   jclass arrayClass) {
-  if (vmInitialized == PHASE_LIVE) {
+  if (vmInitialized == Phase::LIVE) {
     cbHandler->nativeRecordArrayIndexScale(jni, klass, scale, arrayClass);
   }
 }
@@ -327,7 +327,7 @@ jboolean nativeDoSystemArraycopy (JNIEnv *jni,
                                   jobject dst,
                                   jint dstIdx,
                                   jint cnt) {
-  if (vmInitialized == PHASE_LIVE) {
+  if (vmInitialized == Phase::LIVE) {
     jthread thread = cbHandler->getCurrentThread();
     return cbHandler->nativeDoSystemArraycopy(jni, klass, thread, src, srcIdx, dst, dstIdx, cnt);
   } else {
@@ -335,16 +335,23 @@ jboolean nativeDoSystemArraycopy (JNIEnv *jni,
   }
 }
 
-void nativeCounts (JNIEnv *jni,
+void nativeCounts( JNIEnv *jni,
                    jclass klass,
                    jint heapReads,
                    jint heapWrites,
                    jint heapRefReads,
                    jint heapRefWrites,
-                   jint instCount) {
-  if (vmInitialized == PHASE_LIVE) {
-    cbHandler->nativeCounts(jni, klass, heapReads, heapWrites, heapRefReads, heapRefWrites, instCount);
-  }
+                   jint instCount )
+{
+    if (vmInitialized == Phase::LIVE) {
+        cbHandler->nativeCounts( jni,
+                                 klass,
+                                 heapReads,
+                                 heapWrites,
+                                 heapRefReads,
+                                 heapRefWrites,
+                                 instCount );
+    }
 }
 
 extern "C" {
@@ -511,31 +518,34 @@ static void registerNatives (JNIEnv *jni,
   registered = true;
 }
 
-static void cbVMStart (jvmtiEnv*,
-                       JNIEnv *jni) {
-  // entering the JVMTI "Start" phase
-  // all JNI calls are legal
-  // *some* JVMTI calls are legal
+static void cbVMStart( jvmtiEnv*,
+                       JNIEnv *jni )
+{
+    // entering the JVMTI "Start" phase
+    // all JNI calls are legal
+    // *some* JVMTI calls are legal
 
-  IF_TIMING (programTimer.start());
+    IF_TIMING (programTimer.start());
 
 #ifdef LOG_PHASE_CHANGES
-  cerr << "main: VMStart" << endl;
+    cerr << "main: VMStart" << endl;
 #endif
 
-  jclass et = jni->FindClass(ETclassName);
-  if (et == NULL) {
-    fatal_error("ERROR: JNI: Cannot find ElephantTracks with FindClass.\n");
-  }
-  registerNatives(jni, et);
-    
-  if (engageCallbacks) {
-    engagedField = jni->GetStaticFieldID(ETclass, "engaged", "I");
-    if (engagedField == NULL) {
-      fatal_error("ERROR: JNI: Cannot get field from ElephantTracks\n");
+    jclass et = jni->FindClass(ETclassName);
+    if (et == NULL) {
+        fatal_error("ERROR: JNI: Cannot find ElephantTracks with FindClass.\n");
     }
-    jni->SetStaticIntField(ETclass, engagedField, PHASE_START);
-  }
+    registerNatives(jni, et);
+
+    if (engageCallbacks) {
+        engagedField = jni->GetStaticFieldID(ETclass, "engaged", "I");
+        if (engagedField == NULL) {
+            fatal_error("ERROR: JNI: Cannot get field from ElephantTracks\n");
+        }
+        jni->SetStaticIntField( ETclass,
+                                engagedField,
+                                static_cast<std::underlying_type<Phase>::type>(Phase::START) );
+    }
 }
 
 static void cbVMInit (jvmtiEnv *jvmti,
@@ -548,9 +558,11 @@ static void cbVMInit (jvmtiEnv *jvmti,
   cerr << "main: VMInit" << endl;
 #endif
   cbHandler->VMInit(jvmti, env, thread);
-  vmInitialized = PHASE_LIVE;
+  vmInitialized = Phase::LIVE;
   if (engageCallbacks) {
-    env->SetStaticIntField(ETclass, engagedField, PHASE_LIVE);
+      env->SetStaticIntField( ETclass,
+                              engagedField,
+                              static_cast<std::underlying_type<Phase>::type>(Phase::LIVE) );
   } 
   jmethodID liveHook = env->GetStaticMethodID(ETclass, "liveHook", "()V");
   if (env->ExceptionOccurred() == NULL) {
@@ -567,7 +579,7 @@ static inline void cbNativeMethodBind (jvmtiEnv *jvmti,
                                 jmethodID method,
                                 void*,
                                 void**) {
-  if (vmInitialized >= PHASE_LIVE) {
+  if (vmInitialized >= Phase::LIVE) {
     char *name;
     char *signature;
     jvmti->GetMethodName(method, &name, &signature, NULL);
@@ -706,9 +718,11 @@ static void cbVMDeath (jvmtiEnv *jvmti,
 #ifdef LOG_PHASE_CHANGES
   cerr << "main: VMDeath" << endl;
 #endif
-  vmInitialized = PHASE_DEAD;
+  vmInitialized = Phase::DEAD;
   if (engageCallbacks) {
-    env->SetStaticIntField(ETclass, engagedField, PHASE_DEAD);
+    env->SetStaticIntField( ETclass,
+                            engagedField,
+                            static_cast<std::underlying_type<Phase>::type>(Phase::DEAD) );
   }
   jmethodID deathHook = env->GetStaticMethodID(ETclass, "deathHook", "()V");
   if (env->ExceptionOccurred() == NULL) {
