@@ -84,10 +84,10 @@ SortAndOutputThread.o: SortAndOutputThread.cpp SortAndOutputThread.h
 WeakRefCleaner.o: WeakRefCleaner.cpp WeakRefCleaner.h
 
 SortAndOutputThread_test: SortAndOutputThread_test.cpp SortAndOutputThread.o ./StubJvmti/jni.h ./StubJvmti/jvmti.h ./StubJvmti/jvmti.cpp
-	g++ -c -g ./StubJvmti/jvmti.cpp -o ./StubJvmti/jvmti.o -I./StubJvmti 
-	g++ -c -g ./StubJvmti/main.cc -o ./StubJvmti/main.o -I./StubJvmti 
-	g++ -c -g SortAndOutputThread.cpp -I./StubJvmti 
-	g++ -g -DTHREAD_TAG_UPDATES -I./StubJvmti -o SortAndOutputThread_test SortAndOutputThread_test.cpp AllocationRecord.o DeathRecord.o MethodEntryRecord.o MethodExitRecord.o PointerUpdateRecord.o SortAndOutputThread.o RootRecord.o Record.o ./StubJvmti/main.o ./StubJvmti/jvmti.o -ltbb
+	g++ -std=c++11 -c -g ./StubJvmti/jvmti.cpp -o ./StubJvmti/jvmti.o -I./StubJvmti 
+	g++ -std=c++11 -c -g ./StubJvmti/main.cc -o ./StubJvmti/main.o -I./StubJvmti 
+	g++ -std=c++11 -c -g SortAndOutputThread.cpp -I./StubJvmti 
+	g++ -std=c++11 -g -DTHREAD_TAG_UPDATES -I./StubJvmti -o SortAndOutputThread_test SortAndOutputThread_test.cpp AllocationRecord.o DeathRecord.o MethodEntryRecord.o MethodExitRecord.o PointerUpdateRecord.o SortAndOutputThread.o RootRecord.o Record.o ./StubJvmti/main.o ./StubJvmti/jvmti.o -ltbb
 
 ElephantTracks.class 'ElephantTracks$$1.class': ElephantTracks.java
 	javac -g ElephantTracks.java

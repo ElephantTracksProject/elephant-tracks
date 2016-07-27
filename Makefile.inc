@@ -22,7 +22,7 @@ JAVAOPTS = -cp .:$(ASMJAR)
 INCLUDES = -I$(JAVA_PATH)/include -I$(JAVA_PATH)/include/linux -I./java_crw_demo -I./agent_util -I./GraphAlgorithms -I./RootEnumerator \
 	-I$(TBB_PATH)/include
 
-CXXFLAGS = $(INCLUDES) -O2 -fPIC   -L./GraphAlgorithms -L./RootEnumerator -I./GraphAlgorithms -I./gzstream -W -Wall -Werror
+CXXFLAGS = $(INCLUDES) -std=c++11 -O2 -fPIC -L./GraphAlgorithms -L./RootEnumerator -I./GraphAlgorithms -I./gzstream -W -Wall -Werror
 CFLAGS = $(INCLUDES) -O2 -fPIC 
 
 javaclasses = ElephantTracks.class 'ElephantTracks$$1.class'
