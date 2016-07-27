@@ -33,22 +33,23 @@ using namespace tbb;
 
 class HashGraph {
 public:
-  typedef concurrent_vector<atomic<jlong> > EdgeList;
-  typedef concurrent_hash_map<jlong,EdgeList> Node2EdgeListMap;
+    typedef concurrent_vector<atomic<jlong> > EdgeList;
+    typedef concurrent_hash_map<jlong,EdgeList> Node2EdgeListMap;
 
-  HashGraph ();
-  virtual ~HashGraph ();
-  jlong updateEdge (jlong node1, int slot, jlong node2);
-  void addNode (jlong node, int slots);
-  bool removeNode (jlong);
-  pair<EdgeList::const_iterator, EdgeList::const_iterator> neighbors (jlong target);
-  string toString () const;
-  vector<jlong> getNodes () const;
-  void computeReachable (set<jlong> starting);
+    HashGraph ();
+    virtual ~HashGraph ();
+
+    jlong updateEdge (jlong node1, int slot, jlong node2);
+    void addNode (jlong node, int slots);
+    bool removeNode (jlong);
+    pair<EdgeList::const_iterator, EdgeList::const_iterator> neighbors (jlong target);
+    string toString () const;
+    vector<jlong> getNodes () const;
+    void computeReachable (set<jlong> starting);
 private:
-  Node2EdgeListMap edgeMap;
-  EdgeList staticsEdges;
-  concurrent_unordered_set<jlong> growable;
+    Node2EdgeListMap edgeMap;
+    EdgeList staticsEdges;
+    concurrent_unordered_set<jlong> growable;
 };
 
 #endif /* HASHGRAPH_H_ */
