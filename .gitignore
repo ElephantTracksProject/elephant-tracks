@@ -1,0 +1,8 @@
+.*swp
+*.o
+*.a
+*.class
+*.jar
+*.so
+Makefile.local
+manifest

@@ -4,11 +4,12 @@
 # in a Makefile.local file.
 #
 
-INSTALL_DIR = /home/nricci01/elephantTracks
+INSTALL_DIR = ###CHANGE ME###
 
-ASMJAR = /home/nricci01/asm-3.1.jar
+ASMJAR = ###CHANGE ME### current version that we're using is asm-all-3.3.jar
 
-JAVA_PATH = /usr/lib/jvm/java-6-openjdk
+JAVA_PATH = ### Use your java directory. Looks like this: /usr/lib/jvm/java-6-openjdk
+# Has to be Java 1.6. I haven't tested 1.7+
 
 #
 # The lines below give variables that may be customized if needed/desired
