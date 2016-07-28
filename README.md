@@ -22,46 +22,46 @@ The program trace will be in `OutputFile`. Doing the tracing will slow down prog
 java -Xbootclasspath/a:<INSTALL_DIR> -agentlib:ElephantTracks=javaPath=<path to Java>`:outputFile=<OutputFile>:classReWriter=<INSTALL_DIR>/elephantTracksRewriter.jar
 ```
 
-    * Or this way:
+   * Or this way:
 
 ```
 java -classpath <other-paths>:$ASMJAR -Xbootclasspath/a:$INSTALL_DIR \ -agentlib:ElephantTracks=<ElephantTracks Options>
 ```
-    * Options are represented as name=value pairs, and may be given on the command like so:
+   * Options are represented as name=value pairs, and may be given on the command like so:
 
 ```
 -agentlib:ElephantTracks=:=name1=value1@name2=value2@...@nameN=valueN
 ```
 
-    * Note that JVMs often impose an (undocumented) limit on the length of the
+   * Note that JVMs often impose an (undocumented) limit on the length of the
       command strings passed to a JVMTI agent such as Elephant Tracks, and will
       silently truncate if this is limit is exceeded. For this reason, it is
       recommend that infrequently changing options are stored in an option
       file, and specify that option file on the command line (see below).
 
-    * This is a path to a file containing options (the same as may be passed on the command line), one option per line.
+   * This is a path to a file containing options (the same as may be passed on the command line), one option per line.
 ```
 optionsFile=<option file>
 ```
 
-    * This is the path ElephantTracks will use to start its own Java process
+   * This is the path ElephantTracks will use to start its own Java process
       (not the one running your program). It must include `INSTALL_DIR`,
       `INSTALL_DIR/elephantTracksRewriter.jar`, and the `asm-3.3 jar` file.
 ```
 classPath=<path>
 ```
-    * This is the path to the actual java binary, not merely the directory it
+   * This is the path to the actual java binary, not merely the directory it
       is in.
 ```
 javaPath=<path to java executable>
 ```
 
-    * The file in which to output the names information (see below)
+   * The file in which to output the names information (see below)
 ```
 namesFile=<file name>
 ```
 
-    * The file in which to output the trace. You may also redirect trace output
+   * The file in which to output the trace. You may also redirect trace output
       to a shell command with this syntax:
 ```
 traceFile=<file name>
@@ -72,7 +72,7 @@ traceFile=>(shell command)
 ```
 bufferSize=<number>
 ```
-    * How many records to hold in Elephant Tracks’ internal buffer; larger
+   * How many records to hold in Elephant Tracks’ internal buffer; larger
       values generally give better performance, but will use more memory
       (approximately 40 bytes per record).
 
