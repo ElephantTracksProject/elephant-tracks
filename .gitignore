@@ -5,4 +5,5 @@
 *.jar
 *.so
 Makefile.local
+Makefile.inc
 manifest
