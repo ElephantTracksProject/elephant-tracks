@@ -1,7 +1,5 @@
 include ../Makefile.inc
 
-include $(wildcard ../Makefile.local)
-
 all: libGraphAlgorithms.so 
 
 #GraphAlgorithms.o: GraphAlgorithms.h

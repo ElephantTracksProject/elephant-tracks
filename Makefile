@@ -6,11 +6,19 @@
 #   make install
 #
 
+# The system wide settings that affect all sub builds.
+include Makefile.inc
+
+# Only change things below if needed. These are build related and
+# not local settings.
+
 BASEDIR := $(shell pwd)
 
 ETLIB = libElephantTracks$(ETLIB_VERSION).so
 
 ETJAR = elephantTracksRewriter$(ETJAR_VERSION).jar
+
+JAVAC = $(JAVA_PATH)/bin/javac
 
 # define these before doing the includes, so they can br overridden
 
@@ -30,15 +38,6 @@ libraries = elephantTracksRewriter agent_util java_crw_demo gzstream GraphAlgori
 sublibraries = -LGraphAlgorithms -Lgzstream -lgzstream -lz -ltbb
 
 javaclasses = ElephantTracks.class 'ElephantTracks$$1.class'
-
-include Makefile.inc
-
-#
-# The line below expands to 'include ' if there is no Makefile.local,
-# which causes the line to be ignored silently.  If Makefile.local
-# exists, then it is included.
-#
-include $(wildcard Makefile.local)
 
 #
 # The primary/default target
@@ -90,7 +89,7 @@ SortAndOutputThread_test: SortAndOutputThread_test.cpp SortAndOutputThread.o ./S
 	g++ -std=c++11 -g -DTHREAD_TAG_UPDATES -I./StubJvmti -o SortAndOutputThread_test SortAndOutputThread_test.cpp AllocationRecord.o DeathRecord.o MethodEntryRecord.o MethodExitRecord.o PointerUpdateRecord.o SortAndOutputThread.o RootRecord.o Record.o ./StubJvmti/main.o ./StubJvmti/jvmti.o -ltbb
 
 ElephantTracks.class 'ElephantTracks$$1.class': ElephantTracks.java
-	javac -g ElephantTracks.java
+	$(JAVAC) -g ElephantTracks.java
 
 .PHONY: all $(libraries)
 

@@ -15,7 +15,7 @@ ClassReWriter.class ETAdapter.class ETClassWriter.class \
      ETOptMethodAdapter.java  \
      ETInlinerAdapter.java ETNativeWrapper.java ETETMethodAdapter.java \
      ETClassLoader.java
-	javac $(JAVAOPTS) *.java 
+	$(JAVAC) $(JAVAOPTS) *.java 
 
 clean:
 	rm -f *.class

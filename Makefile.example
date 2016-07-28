@@ -1,25 +1,36 @@
+# TODO: We need to get rid of recursive make because
+# recursive make makes (haha) the build harder to understand
+# for no gain.
 
-# The lines below give variables that probably need customization to
-# the target system.  The easiest way to do that is to redefine them
-# in a Makefile.local file.
-#
+# USER SETTINGS
+# Change to suit your local settings
 
-INSTALL_DIR = ###CHANGE ME###
+INSTALL_DIR = /data/rveroy/share/lib
 
-ASMJAR = ###CHANGE ME### current version that we're using is asm-all-3.3.jar
+ASMJAR = /data/rveroy/src/JAR/asm-all-3.3.jar
 
-JAVA_PATH = ### Use your java directory. Looks like this: /usr/lib/jvm/java-6-openjdk
-# Has to be Java 1.6. I haven't tested 1.7+
+# So far compiles with the following versions of Java
+# JAVA_PATH = /usr/lib/jvm/java-1.6.0-openjdk-1.6.0.39.x86_64
+JAVA_PATH = /usr/lib/jvm/java-1.7.0-oracle.x86_64
 
-#
-# The lines below give variables that may be customized if needed/desired
-#
+# Uncomment and customize if you need a non-standard location for TBB
+TBB_PATH = /data/rveroy/src/tbb44_20160526oss
+TBB_LIBPATH = /data/rveroy/src/tbb44_20160526oss/lib/intel64/gcc4.4
 
+# TODO: Shouldn't this be JAVA_OPTS? And where is this used? - RLV
 JAVAOPTS = -cp .:$(ASMJAR)
 
-INCLUDES = -I$(JAVA_PATH)/include -I$(JAVA_PATH)/include/linux -I./java_crw_demo -I./agent_util -I./GraphAlgorithms -I./RootEnumerator
+# Use this if using system installation of TBB
+# INCLUDES = -I$(JAVA_PATH)/include -I$(JAVA_PATH)/include/linux -I./java_crw_demo -I./agent_util -I./GraphAlgorithms -I./RootEnumerator \
 
-CXXFLAGS = $(INCLUDES) -O2 -fPIC   -L./GraphAlgorithms -L./RootEnumerator -I./GraphAlgorithms -I./gzstream -W -Wall -Werror
+# Use this if you need to specify a custom location for TBB
+INCLUDES = -I$(JAVA_PATH)/include -I$(JAVA_PATH)/include/linux -I./java_crw_demo -I./agent_util -I./GraphAlgorithms -I./RootEnumerator \
+    -I$(TBB_PATH)/include -Wl,-L$(TBB_LIBPATH)
+
+CXXFLAGS = $(INCLUDES) -O2 -fPIC   -L./GraphAlgorithms -L./RootEnumerator -I./GraphAlgorithms -I./gzstream -W -Wall -Werror -std=c++11
 CFLAGS = $(INCLUDES) -O2 -fPIC 
 
 javaclasses = ElephantTracks.class 'ElephantTracks$$1.class'
+
+# END USER SETTINGS
+################################################################################################
