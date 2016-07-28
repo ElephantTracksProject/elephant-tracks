@@ -18,8 +18,6 @@ ETLIB = libElephantTracks$(ETLIB_VERSION).so
 
 ETJAR = elephantTracksRewriter$(ETJAR_VERSION).jar
 
-JAVAC = $(JAVA_PATH)/bin/javac
-
 # define these before doing the includes, so they can br overridden
 
 objects = main.o \
