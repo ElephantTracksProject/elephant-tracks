@@ -15,6 +15,7 @@ ClassReWriter.class ETAdapter.class ETClassWriter.class \
      ETOptMethodAdapter.java  \
      ETInlinerAdapter.java ETNativeWrapper.java ETETMethodAdapter.java \
      ETClassLoader.java
+	$(JAVAC) -version
 	$(JAVAC) $(JAVAOPTS) *.java 
 
 clean:
