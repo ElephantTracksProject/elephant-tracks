@@ -17,6 +17,8 @@ JAVA_PATH = /usr/lib/jvm/java-1.7.0-oracle.x86_64
 TBB_PATH = /data/rveroy/src/tbb44_20160526oss
 TBB_LIBPATH = /data/rveroy/src/tbb44_20160526oss/lib/intel64/gcc4.4
 
+JAVAC = $(JAVA_PATH)/bin/javac
+
 # TODO: Shouldn't this be JAVA_OPTS? And where is this used? - RLV
 JAVAOPTS = -cp .:$(ASMJAR)
 
