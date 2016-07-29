@@ -293,7 +293,7 @@ public:
   jlong getTagAndTagIfNeeded (JNIEnv* jni,
                               jobject o);
 
-  atomic<int> GCsToProcess;
+  tbb::atomic<int> GCsToProcess;
 
   jlong totalHeapReads;
   jlong totalHeapWrites;
@@ -406,10 +406,10 @@ private:
   ClassTag2SlotsMap classTag2slots;
 
   // number of static slots seen so far
-  atomic <int> staticSlots;
+  tbb::atomic <int> staticSlots;
 
   // used for assigning ids when a class was not presented to the rewriter (ugh!)
-  atomic <int> nextSyntheticId;
+  tbb::atomic <int> nextSyntheticId;
 
   // data structures for dealing with updates via Unsafe putObject, etc.
 
@@ -438,7 +438,7 @@ private:
   typedef concurrent_unordered_map<ClassTagAndJFieldID,int> TagAndJFieldID2AgentId;
   TagAndJFieldID2AgentId tagAndJFieldID2AgentId;
 
-  atomic<jlong> currentTime;
+  tbb::atomic<jlong> currentTime;
 
   jlong incTime () {
     return ++(this->currentTime);

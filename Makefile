@@ -14,6 +14,8 @@ include Makefile.inc
 
 BASEDIR := $(shell pwd)
 
+LIBRARY_PATH = TBB_LIBPATH:$(LIBRARY_PATH)
+
 ETLIB = libElephantTracks$(ETLIB_VERSION).so
 
 ETJAR = elephantTracksRewriter$(ETJAR_VERSION).jar

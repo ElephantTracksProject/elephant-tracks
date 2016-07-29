@@ -25,7 +25,7 @@ jlong HashGraph::updateEdge (jlong node1, int slot, jlong node2) {
              ((unsigned int) slot >= staticsEdges.size()) ) {
             // grow it
             int needed = (slot+1 - staticsEdges.size());
-            atomic<jlong> zero;
+            tbb::atomic<jlong> zero;
             zero = 0;
             staticsEdges.grow_by(needed, zero);
         }
@@ -53,7 +53,7 @@ jlong HashGraph::updateEdge (jlong node1, int slot, jlong node2) {
             }
             // grow it
             int needed = (slot+1 - (*edges).size());
-            atomic<jlong> zero;
+            tbb::atomic<jlong> zero;
             zero = 0;
             (*edges).grow_by(needed, zero);
         } else if (slot < 0) {
@@ -84,17 +84,17 @@ bool HashGraph::removeNode (jlong node) {
 }
 
 pair<HashGraph::EdgeList::const_iterator, HashGraph::EdgeList::const_iterator> HashGraph::neighbors (jlong target) {
-  //This is a convenient thing to return if "target" has no neighbors.
-  //It needs to be static, otherwise the iterators no longer make any 
-  //sense once this method returns; using them would be undefined.
-  static EdgeList nullList;
-  EdgeList & edges = nullList;
+    //This is a convenient thing to return if "target" has no neighbors.
+    //It needs to be static, otherwise the iterators no longer make any
+    //sense once this method returns; using them would be undefined.
+    static EdgeList nullList;
+    EdgeList & edges = nullList;
 
-  Node2EdgeListMap::const_accessor acc;
-  if (edgeMap.find(acc, target)) {
-    edges = acc->second;
-  }
-  return make_pair(edges.begin(), edges.end());
+    Node2EdgeListMap::const_accessor acc;
+    if (edgeMap.find(acc, target)) {
+        edges = acc->second;
+    }
+    return make_pair(edges.begin(), edges.end());
 }
 
 string HashGraph::toString () const {
@@ -123,21 +123,21 @@ vector<jlong> HashGraph::getNodes () const {
 }
 
 void HashGraph::computeReachable (set<jlong> reached) {
-  stack<jlong> toProcess;
-  for (set<jlong>::const_iterator it = reached.begin(); it != reached.end(); it++) {
-    toProcess.push(*it);
-  }
-  while (!toProcess.empty()) {
-    pair<EdgeList::const_iterator,EdgeList::const_iterator> beginEnd = neighbors(toProcess.top());
-    toProcess.pop();
-    for (EdgeList::const_iterator nit = beginEnd.first;
-	 nit != beginEnd.second;
-	 nit++) {
-      if (reached.find(*nit) == reached.end()) {
-	// reachable, but not yet processed or queued for processing
-	reached.insert(*nit);
-	toProcess.push(*nit);
-      }
+    stack<jlong> toProcess;
+    for (set<jlong>::const_iterator it = reached.begin(); it != reached.end(); it++) {
+        toProcess.push(*it);
     }
-  }
+    while (!toProcess.empty()) {
+        pair<EdgeList::const_iterator,EdgeList::const_iterator> beginEnd = neighbors(toProcess.top());
+        toProcess.pop();
+        for (auto nit = beginEnd.first;
+             nit != beginEnd.second;
+             nit++) {
+            if (reached.find(*nit) == reached.end()) {
+                // reachable, but not yet processed or queued for processing
+                reached.insert(*nit);
+                toProcess.push(*nit);
+            }
+        }
+    }
 }

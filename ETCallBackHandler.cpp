@@ -50,7 +50,7 @@ static void JNICALL cleanerStaticWrapper (jvmtiEnv *jvmti, JNIEnv* jni, void* da
   }
 }
 
-static atomic<jlong> nextTag; //The next object tag to use, we skip 0 since we use that to identify null
+static tbb::atomic<jlong> nextTag; //The next object tag to use, we skip 0 since we use that to identify null
 
 ETCallBackHandler::ETCallBackHandler (jvmtiEnv *jvmti,
                                       JavaVM*,

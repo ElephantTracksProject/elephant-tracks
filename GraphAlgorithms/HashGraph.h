@@ -33,7 +33,7 @@ using namespace tbb;
 
 class HashGraph {
 public:
-    typedef concurrent_vector<atomic<jlong> > EdgeList;
+    typedef concurrent_vector< tbb::atomic<jlong> > EdgeList;
     typedef concurrent_hash_map<jlong,EdgeList> Node2EdgeListMap;
 
     HashGraph ();
