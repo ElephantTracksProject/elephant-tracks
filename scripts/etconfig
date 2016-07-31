@@ -1,7 +1,7 @@
-classPath=/home/sguyer/elephant-tracks:/home/sguyer/elephant-tracks/elephantTracksRewriter.jar:/home/sguyer/asm-3.3/lib/all/asm-all-3.3.jar
+classPath=/data/rveroy/pulsrc/ETRUN/lib:/data/rveroy/pulsrc/ETRUN/lib:/data/rveroy/src/JAR/asm-all-3.3.jar
 deathChunks=false
 showFields=T
-javaPath=/usr/bin/java
+javaPath=/usr/lib/jvm/java-1.7.0-oracle.x86_64/bin/java
 experimental=EFINORUWX
 verbose=F
 bufferSize=1000000
