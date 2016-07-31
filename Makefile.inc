@@ -5,18 +5,18 @@
 # USER SETTINGS
 # Change to suit your local settings
 
-INSTALL_DIR = /data/rveroy/share/lib
+INSTALL_DIR = /data/rveroy/ETRUN/lib
 
 ASMJAR = /data/rveroy/src/JAR/asm-all-3.3.jar
 
 # So far compiles with the following versions of Java
-# JAVA_PATH = /usr/lib/jvm/java-1.6.0-openjdk-1.6.0.39.x86_64
+JAVA_PATH = /usr/lib/jvm/java-1.6.0-openjdk-1.6.0.39.x86_64
 #
 # JAVA_PATH for Tufts black-hole and white-hole
 # JAVA_PATH = /usr/lib/jvm/java-1.7.0-oracle.x86_64
 #
 # JAVA_PATH for Tufts red-giant
-JAVA_PATH = /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.111-2.6.7.2.el7_2.x86_64
+# JAVA_PATH = /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.111-2.6.7.2.el7_2.x86_64
 
 # Uncomment and customize if you need a non-standard location for TBB
 TBB_PATH = /data/rveroy/src/tbb44_20160526oss
