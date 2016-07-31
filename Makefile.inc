@@ -5,12 +5,17 @@
 # USER SETTINGS
 # Change to suit your local settings
 
-INSTALL_DIR = /data/rveroy/ETRUN/lib
+INSTALL_DIR = /data/rveroy/pulsrc/ETRUN/lib
 
 ASMJAR = /data/rveroy/src/JAR/asm-all-3.3.jar
 
 # So far compiles with the following versions of Java
-JAVA_PATH = /usr/lib/jvm/java-1.6.0-openjdk-1.6.0.39.x86_64
+# JAVA_PATH = /usr/lib/jvm/java-1.6.0-openjdk-1.6.0.39.x86_64
+#
+# Seems that there's a bug when running ET with Hotspot, so
+# we're going to use IBM's J9 here (version 1.6)
+JAVA_PATH = /data/rveroy/src/ibm-java-x86_64-60
+
 #
 # JAVA_PATH for Tufts black-hole and white-hole
 # JAVA_PATH = /usr/lib/jvm/java-1.7.0-oracle.x86_64
@@ -35,7 +40,10 @@ INCLUDES = -I$(TBB_PATH)/include -I$(JAVA_PATH)/include -I$(JAVA_PATH)/include/l
 #     -I./GraphAlgorithms -I./RootEnumerator
 
 # CXXFLAGS = $(INCLUDES) -O2 -fPIC   -L./GraphAlgorithms -L./RootEnumerator -I./GraphAlgorithms -I./gzstream -W -Wall -Werror -std=c++11
-CXXFLAGS = $(INCLUDES) -O2 -fPIC   -L./GraphAlgorithms -L./RootEnumerator -I./GraphAlgorithms -I./gzstream -W -Wall -Werror -std=c++11
+# The -Werror version for non-J9 javas
+# CXXFLAGS = $(INCLUDES) -O2 -fPIC   -L./GraphAlgorithms -L./RootEnumerator -I./GraphAlgorithms -I./gzstream -W -Wall -Werror -std=c++11
+# Without -Werror version for non-J9 javas and adding -fpermissive
+CXXFLAGS = $(INCLUDES) -O2 -fPIC   -L./GraphAlgorithms -L./RootEnumerator -I./GraphAlgorithms -I./gzstream -W -Wall -fpermissive -std=c++11
 CFLAGS = $(INCLUDES) -O2 -fPIC
 
 javaclasses = ElephantTracks.class 'ElephantTracks$$1.class'
