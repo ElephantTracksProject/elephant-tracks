@@ -1,35 +1,28 @@
 #!/bin/bash -xv
 
-export ET_JAVA_PATH=/opt/ibm/java-x86_64-60
+# export ET_JAVA_PATH=/usr/lib/jvm/java-1.7.0-oracle.x86_64
+# export ET_JAVA_PATH=/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.39.x86_64
+export ET_JAVA_PATH=/data/rveroy/src/ibm-java-x86_64-60
 
-export ASMJAR=/home/sguyer/asm-3.3/lib/all/asm-all-3.3.jar
-
-export ETDIR=/home/sguyer/elephant-tracks
-
+export ASMJAR=/data/rveroy/src/JAR/asm-all-3.3.jar
+export ETDIR=/data/rveroy/pulsrc/ETRUN/lib
 export ETJAR=${ETDIR}/elephantTracksRewriter.jar
 
-export LD_LIBRARY_PATH=$ETDIR:
-
+export LD_LIBRARY_PATH=$ETDIR:$LD_LIBRARY_PATH
 
 ET_CLASS_PATH=${ETDIR}:${ETJAR}:${ASMJAR} 
-
 
 export JAVA_PATH=$ET_JAVA_PATH
 
 scratchdir="scratch-${OFILE}"
 
-#echo "-Xdump=IPOW"                               >> "${OFILE}.args"
-#echo "-XdumpOrig=${OFILE}-orig"                  >> "${OFILE}.args"
-#echo "-XdumpPre=${OFILE}-pre"                    >> "${OFILE}.args"
-#echo "-XdumpWrap=${OFILE}-wrap"                  >> "${OFILE}.args"
-#echo "-XdumpInst=${OFILE}-inst"                  >> "${OFILE}.args"
-#echo '-Xdump+org/python/core/BytecodeLoader$Loader'   >> "${OFILE}.args"
-#echo '-Xdump+org/python/core/PyFunctionTable'         >> "${OFILE}.args"
-#echo '-Xdump+posixpath$py'                            >> "${OFILE}.args"
+#exec_string="LD_LIBRARY_PATH=${LD_LIBRARY_PATH} ${JAVA_PATH}/bin/java -classpath .:${ASMJAR}: -Xbootclasspath/a:${ETDIR} -agentlib:ElephantTracks=:=@traceFile=>(gzip >test.trace.alloc.gz)@namesFile=test.names@-XechoArgs@optionsFile=etconfig@-Xdefault=OW $*"
 
-exec_string="${JAVA_PATH}/bin/java -classpath . -Xbootclasspath/a:${ETDIR} -agentlib:ElephantTracks=:=@traceFile=>(gzip >${OFILE}.trace.alloc.gz)@namesFile=${OFILE}.names@-XechoArgs@optionsFile=${HOME}/.elephantTracks@-Xdefault=OW $*"
+# exec_string="LD_LIBRARY_PATH=${ETDIR}:${LD_LIBRARY_PATH} CLASSPATH=.:${ASMJAR}:${ETDIR}  ${JAVA_PATH}/bin/java  -Xbootclasspath/a:${ETDIR}  -agentlib:ElephantTracks=javaPath=${JAVA_PATH}:traceFile=test.trace:namesFile=test.names:classReWriter=${ETDIR}/elephantTracksRewriter.jar  $*"
+
+# exec_string="LD_LIBRARY_PATH=${ETDIR}:${LD_LIBRARY_PATH} CLASSPATH=.:${ASMJAR}:${ETDIR}  ${JAVA_PATH}/bin/java  -Xbootclasspath/a:${ETDIR}  -agentlib:ElephantTracks=javaPath=${JAVA_PATH}:traceFile=test.trace:namesFile=test.names:classReWriter=${ETDIR}/elephantTracksRewriter.jar  $*"
+ 
+exec_string="LD_LIBRARY_PATH=${ETDIR}:${LD_LIBRARY_PATH} CLASSPATH=.:${ASMJAR}:${ETDIR}  ${JAVA_PATH}/bin/java   -classpath .:${ASMJAR}:${ETDIR}  -Xbootclasspath/a:${ETDIR} -agentlib:ElephantTracks=:=@traceFile=test.trace.gz@namesFile=test.names@-XechoArgs@optionsFile=./etconfig@-Xdefault=OW $*"
 
 echo $exec_string
-
 eval $exec_string
-
