@@ -89,7 +89,6 @@ SortAndOutputThread_test: SortAndOutputThread_test.cpp SortAndOutputThread.o ./S
 	g++ -std=c++11 -g -DTHREAD_TAG_UPDATES -I./StubJvmti -o SortAndOutputThread_test SortAndOutputThread_test.cpp AllocationRecord.o DeathRecord.o MethodEntryRecord.o MethodExitRecord.o PointerUpdateRecord.o SortAndOutputThread.o RootRecord.o Record.o ./StubJvmti/main.o ./StubJvmti/jvmti.o -ltbb
 
 ElephantTracks.class 'ElephantTracks$$1.class': ElephantTracks.java
-	@echo $(JAVAC)
 	$(JAVAC) -g ElephantTracks.java
 
 .PHONY: all $(libraries)

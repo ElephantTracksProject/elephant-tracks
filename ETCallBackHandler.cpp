@@ -1424,8 +1424,10 @@ jobject instNewObjectA (JNIEnv *jni, jclass klass, jmethodID methodID, const jva
   )
   theJVMTI->Deallocate((unsigned char*)classSig);
 #endif
+  jvalue tmp_args = *args; // Copy to a local variable since the original is const anyway.
+                           // This will fix the compilation failures under -Werror
   // we will find the object at the start of the constructor
-  jobject obj = origJNIEnv->NewObjectA(jni, klass, methodID, args);
+  jobject obj = origJNIEnv->NewObjectA(jni, klass, methodID, &tmp_args);
   return obj;
 }
 

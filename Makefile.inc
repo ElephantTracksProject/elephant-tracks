@@ -42,8 +42,7 @@ INCLUDES = -I$(TBB_PATH)/include -I$(JAVA_PATH)/include -I$(JAVA_PATH)/include/l
 # CXXFLAGS = $(INCLUDES) -O2 -fPIC   -L./GraphAlgorithms -L./RootEnumerator -I./GraphAlgorithms -I./gzstream -W -Wall -Werror -std=c++11
 # The -Werror version for non-J9 javas
 # CXXFLAGS = $(INCLUDES) -O2 -fPIC   -L./GraphAlgorithms -L./RootEnumerator -I./GraphAlgorithms -I./gzstream -W -Wall -Werror -std=c++11
-# Without -Werror version for non-J9 javas and adding -fpermissive
-CXXFLAGS = $(INCLUDES) -O2 -fPIC   -L./GraphAlgorithms -L./RootEnumerator -I./GraphAlgorithms -I./gzstream -W -Wall -fpermissive -std=c++11
+CXXFLAGS = $(INCLUDES) -O2 -fPIC   -L./GraphAlgorithms -L./RootEnumerator -I./GraphAlgorithms -I./gzstream -W -Wall -std=c++11 -DLOG_PHASE_CHANGES
 CFLAGS = $(INCLUDES) -O2 -fPIC
 
 javaclasses = ElephantTracks.class 'ElephantTracks$$1.class'
