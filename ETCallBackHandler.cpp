@@ -1413,7 +1413,7 @@ jobject instNewObject (JNIEnv *jni, jclass klass, jmethodID methodID, ...) {
   return obj;
 }
 
-jobject instNewObjectA (JNIEnv *jni, jclass klass, jmethodID methodID, const jvalue *args) {
+jobject instNewObjectA (JNIEnv *jni, jclass klass, jmethodID methodID, jvalue *args) {
 #ifdef TRACE_NEW_OBJECTS
   jvmtiError err;
   char *classSig;
@@ -1424,10 +1424,10 @@ jobject instNewObjectA (JNIEnv *jni, jclass klass, jmethodID methodID, const jva
   )
   theJVMTI->Deallocate((unsigned char*)classSig);
 #endif
-  jvalue tmp_args = *args; // Copy to a local variable since the original is const anyway.
-                           // This will fix the compilation failures under -Werror
+  // jvalue tmp_args = *args; // Copy to a local variable since the original is const anyway.
+  //                          // This will fix the compilation failures under -Werror
   // we will find the object at the start of the constructor
-  jobject obj = origJNIEnv->NewObjectA(jni, klass, methodID, &tmp_args);
+  jobject obj = origJNIEnv->NewObjectA(jni, klass, methodID, args);
   return obj;
 }
 
