@@ -64,7 +64,7 @@ void verbose_println (string s) {
 
 bool showFields = false;  // whether to show the field being updated in pointer moved records
 
-void
+// TODO void
 // TODO add_et_jar_to_bootclasspath( jvmtiEnv *jvmti )
 // TODO {
 // TODO     jvmtiError error;
