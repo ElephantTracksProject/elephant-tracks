@@ -33,6 +33,10 @@ map<string,string> getOptions (char* optString);
 
 static jrawMonitorID theBigLock;
 
+static const char *ETclassName = "ElephantTracks";
+// static const char *ETclassName = "net/redline/ElephantTracks";
+static jfieldID engagedField;
+
 // This is slightly complicated:
 // outputFile and one of ofs/ogz will point to the same stream (one will be null)
 // but I need the ogz/ofs pointer later to call "close" (since ostream does not have that method).
@@ -43,33 +47,44 @@ static ogzstream *ogz        = NULL;
 
 static HL::Timer programTimer;
 
+static ClassInstrumenter* instrumenter;
+static Phase vmInitialized = Phase::ONLOAD;
+static jclass etClass_g = NULL; 
+// TODO static char *etjar_g = NULL;
+
 bool engageCallbacks = true;
 bool countCalls = false;
 
 bool verbose = false;
 void verbose_println (string s) {
-  if (verbose) {
-    cout << s << endl;
-  }
+    if (verbose) {
+        cout << s << endl;
+    }
 }
 
 bool showFields = false;  // whether to show the field being updated in pointer moved records
 
+void
+// TODO add_et_jar_to_bootclasspath( jvmtiEnv *jvmti )
+// TODO {
+// TODO     jvmtiError error;
+// TODO    
+// TODO     error = jvmti->ddToBootstrapClassLoaderSearch( (const char*)etjar_g);
+// TODO     check_jvmti_error(jvmti, error, "Cannot add to boot classpath");
+// TODO }
+
 void enter_critical_section (jvmtiEnv *jvmti) {
-  jvmtiError error = jvmti->RawMonitorEnter(theBigLock);
-  check_jvmti_error(jvmti, error, "Cannot enter with raw monitor");
+    jvmtiError error = jvmti->RawMonitorEnter(theBigLock);
+    check_jvmti_error(jvmti, error, "Cannot enter with raw monitor");
 }
 
 void exit_critical_section (jvmtiEnv *jvmti) {
-  jvmtiError error = jvmti->RawMonitorExit(theBigLock);
-  check_jvmti_error(jvmti, error, "Cannot exit with raw monitor");
+    jvmtiError error = jvmti->RawMonitorExit(theBigLock);
+    check_jvmti_error(jvmti, error, "Cannot exit with raw monitor");
 }
 
 void setCallbacks (jvmtiEnv *jvmti);
-static ClassInstrumenter* instrumenter;
-static Phase vmInitialized = Phase::ONLOAD;
-
-void instrumentClass (jvmtiEnv *jvmti,
+void instrumentClass( jvmtiEnv *jvmti,
                       JNIEnv* env,
                       jclass class_being_redefined,
                       jobject loader,
@@ -78,13 +93,17 @@ void instrumentClass (jvmtiEnv *jvmti,
                       jint class_data_len,
                       const unsigned char* class_data,
                       jint* new_class_data_len,
-                      unsigned char** new_class_data) {
-  if (wantToInstrument(name, class_being_redefined, class_data, class_data_len)) {
-    /*Just pass on the call to the instrumenter */
-    instrumenter->instrumentClass(jvmti, env, class_being_redefined, loader, name,
-                                  protection_domain, class_data_len, class_data,
-                                  new_class_data_len, new_class_data);
-  }
+                      unsigned char** new_class_data )
+{
+#ifdef LOG_PHASE_CHANGES
+    cerr << "instrumentClass: class loaded - " << name << endl;
+#endif
+    if (wantToInstrument(name, class_being_redefined, class_data, class_data_len)) {
+        /*Just pass on the call to the instrumenter */
+        instrumenter->instrumentClass(jvmti, env, class_being_redefined, loader, name,
+                                      protection_domain, class_data_len, class_data,
+                                      new_class_data_len, new_class_data);
+    }
 }
 
 ETCallBackHandler* cbHandler;
@@ -361,10 +380,6 @@ extern "C" {
   }
 }
 
-static const char *ETclassName = "ElephantTracks";
-static jclass ETclass = NULL;
-static jfieldID engagedField;
-
 #define NUM_NATIVES 21
 
 static bool registered = false;
@@ -375,8 +390,8 @@ static void registerNatives (JNIEnv *jni,
     return;
   }
 
-  if (ETclass == NULL) {
-    ETclass = (jclass)(jni->NewGlobalRef(klass));
+  if (etClass_g == NULL) {
+    etClass_g = static_cast<jclass>(jni->NewGlobalRef(klass));
   }
 
   JNINativeMethod jni_pointerUpdated;
@@ -509,7 +524,7 @@ static void registerNatives (JNIEnv *jni,
   native_methods[19] = jni_doSystemArraycopy;
   native_methods[20] = jni_counts;
     
-  int rc = jni->RegisterNatives(ETclass, native_methods, NUM_NATIVES);
+  int rc = jni->RegisterNatives(etClass_g, native_methods, NUM_NATIVES);
   if (rc != 0) {
     fatal_error("ElephantTracksAgent: ERROR: JNI: Cannot register native methods for %s, rc: %d\n",
                 ETclassName, rc);
@@ -518,7 +533,7 @@ static void registerNatives (JNIEnv *jni,
   registered = true;
 }
 
-static void cbVMStart( jvmtiEnv*,
+static void cbVMStart( jvmtiEnv *,
                        JNIEnv *jni )
 {
     // entering the JVMTI "Start" phase
@@ -531,18 +546,19 @@ static void cbVMStart( jvmtiEnv*,
     cerr << "main: VMStart" << endl;
 #endif
 
-    jclass et = jni->FindClass(ETclassName);
+    jclass et = NULL;
+    et = jni->FindClass(ETclassName);
     if (et == NULL) {
         fatal_error("ERROR: JNI: Cannot find ElephantTracks with FindClass.\n");
     }
     registerNatives(jni, et);
 
     if (engageCallbacks) {
-        engagedField = jni->GetStaticFieldID(ETclass, "engaged", "I");
+        engagedField = jni->GetStaticFieldID(etClass_g, "engaged", "I");
         if (engagedField == NULL) {
             fatal_error("ERROR: JNI: Cannot get field from ElephantTracks\n");
         }
-        jni->SetStaticIntField( ETclass,
+        jni->SetStaticIntField( etClass_g,
                                 engagedField,
                                 static_cast<std::underlying_type<Phase>::type>(Phase::START) );
     }
@@ -560,13 +576,13 @@ static void cbVMInit (jvmtiEnv *jvmti,
   cbHandler->VMInit(jvmti, env, thread);
   vmInitialized = Phase::LIVE;
   if (engageCallbacks) {
-      env->SetStaticIntField( ETclass,
+      env->SetStaticIntField( etClass_g,
                               engagedField,
                               static_cast<std::underlying_type<Phase>::type>(Phase::LIVE) );
   } 
-  jmethodID liveHook = env->GetStaticMethodID(ETclass, "liveHook", "()V");
+  jmethodID liveHook = env->GetStaticMethodID(etClass_g, "liveHook", "()V");
   if (env->ExceptionOccurred() == NULL) {
-    env->CallStaticVoidMethod(ETclass, liveHook);
+    env->CallStaticVoidMethod(etClass_g, liveHook);
   } else {
     env->ExceptionClear();
   }
@@ -597,7 +613,7 @@ static inline void cbNativeMethodBind (jvmtiEnv *jvmti,
 }
 
 // support routine for other modules
-JNIEnv *getJNI () {
+JNIEnv *getJNI() {
   // JNIEnv pointers are per-thread, so we do NOT cache this globally
   // Most functions are provided with this, but sometimes we need it "out of thin air"
   JNIEnv *jni;
@@ -606,106 +622,123 @@ JNIEnv *getJNI () {
 }
 
 
-jint Agent_OnLoad (JavaVM *vm,
+jint Agent_OnLoad( JavaVM *vm,
                    char *options,
-                   void*) {
-  verbose_println("main:: AgentOnload entered");
-  theVM = vm;
+                   void * )
+{
+#ifdef LOG_PHASE_CHANGES
+    cerr << "main: AgentOnload entered" << endl;
+#endif
+    verbose_println("main:: AgentOnload entered");
+    theVM = vm;
 
-  map<string,string> optionMap = getOptions(options);
+    map<string,string> optionMap = getOptions(options);
 
-  if (optionMap["verbose"] == "T" || optionMap["verbose"] == "t") {
-    verbose = true;
-  }
-
-  if (optionMap["showFields"] == "T" || optionMap["showFields"] == "t") {
-    showFields = true;
-  }
-
-  if (optionMap["zip"] == "T") {
-
-    ogz = new ogzstream();
-    ogz->open(((optionMap["traceFile"]) + ".gz").c_str());
-
-    if (ogz->fail()) {
-      cerr << "Error opening output file " << optionMap["traceFile"] << " for writing." << endl;
-      exit(1);
+    if (optionMap["verbose"] == "T" || optionMap["verbose"] == "t") {
+        verbose = true;
     }
 
-    outputFile = ogz;
-
-  } else {
-
-    ofs = new ofstream();
-    ofs->open((optionMap["traceFile"]).c_str());
-    if (ofs->fail()) {
-      cerr << "Error opening output file " << optionMap["traceFile"] << " for writing." << endl;
-      exit(1);
+    if (optionMap["showFields"] == "T" || optionMap["showFields"] == "t") {
+        showFields = true;
     }
 
-    outputFile = ofs;
+    if (optionMap["zip"] == "T") {
 
-  }
+        ogz = new ogzstream();
+        ogz->open(((optionMap["traceFile"]) + ".gz").c_str());
 
-  unsigned int maxRecordsToBuffer = atoi(optionMap["bufferSize"].c_str());
+        if (ogz->fail()) {
+            cerr << "Error opening output file " << optionMap["traceFile"] << " for writing." << endl;
+            exit(1);
+        }
 
-  string which = optionMap["whichRecs"];
-  int whichDefault = (which[0] == '-');
-  for (int i = 0; i < 256; ++i) {
-    wantRecord[i] = whichDefault;
-  }
-  int whichSet = 1;
-  for (unsigned int i = 0; i < which.length(); ++i) {
-    if (which[i] == '-') {
-      whichSet ^= 1;
+        outputFile = ogz;
+
     } else {
-      wantRecord[(unsigned int)which[i]] = whichSet;
+
+        ofs = new ofstream();
+        ofs->open((optionMap["traceFile"]).c_str());
+        if (ofs->fail()) {
+            cerr << "Error opening output file " << optionMap["traceFile"] << " for writing." << endl;
+            exit(1);
+        }
+
+        outputFile = ofs;
+
     }
-  }
 
-  if (optionMap.count("engageCallbacks") && optionMap["engageCallbacks"].compare("false") == 0) {
-    engageCallbacks = false;
-  }
+    unsigned int maxRecordsToBuffer = atoi(optionMap["bufferSize"].c_str());
 
-  if (optionMap.count("countCalls") && optionMap["countCalls"].compare("true") == 0) {
-    countCalls = true;
-  }
+    string which = optionMap["whichRecs"];
+    int whichDefault = (which[0] == '-');
+    for (int i = 0; i < 256; ++i) {
+        wantRecord[i] = whichDefault;
+    }
+    int whichSet = 1;
+    for (unsigned int i = 0; i < which.length(); ++i) {
+        if (which[i] == '-') {
+            whichSet ^= 1;
+        } else {
+            wantRecord[(unsigned int)which[i]] = whichSet;
+        }
+    }
 
-  if (optionMap.count("deathChunks") && optionMap["deathChunks"].compare("false") == 0) {
-    includeDeathChunks = false;
-  }
+    if (optionMap.count("engageCallbacks") && optionMap["engageCallbacks"].compare("false") == 0) {
+        engageCallbacks = false;
+    }
 
-  jvmtiEnv *jvmti;
-  theVM->GetEnv((void **)&jvmti, JVMTI_VERSION_1_1);
-  cachedJvmti = jvmti;
+    if (optionMap.count("countCalls") && optionMap["countCalls"].compare("true") == 0) {
+        countCalls = true;
+    }
 
-  FlatTraceOutputter *outputter =
-    new FlatTraceOutputter(jvmti, outputFile, maxRecordsToBuffer, &traceBufferFull);
+    if (optionMap.count("deathChunks") && optionMap["deathChunks"].compare("false") == 0) {
+        includeDeathChunks = false;
+    }
 
-  cbHandler = new ETCallBackHandler(jvmti, vm, outputter);
+    jvmtiEnv *jvmti;
+    theVM->GetEnv((void **)&jvmti, JVMTI_VERSION_1_1);
+    cachedJvmti = jvmti;
 
-  instrumenter =
-    new ExternalClassInstrumenter(jvmti,
-                                  optionMap["javaPath"],
-                                  optionMap["classPath"],
-                                  optionMap["classReWriter"],
-                                  optionMap["namesFile"],
-                                  verbose,
-                                  optionMap["experimental"],
-                                  optionMap,
-                                  cbHandler);
+    FlatTraceOutputter *outputter =
+        new FlatTraceOutputter(jvmti, outputFile, maxRecordsToBuffer, &traceBufferFull);
 
-  jvmtiError error = jvmti->CreateRawMonitor("agent data", &theBigLock);
-  check_jvmti_error(jvmti, error, "Cannot create raw monitor");
-	
-  setCapabilities(jvmti);
-  setEvents(jvmti);	
-  setCallbacks(jvmti);
+    cbHandler = new ETCallBackHandler(jvmti, vm, outputter);
 
-  error = jvmti->SetNativeMethodPrefix("$$ET$$");
-  check_jvmti_error(jvmti, error, "Could not set native method prefix");
+    instrumenter =
+        new ExternalClassInstrumenter(jvmti,
+                optionMap["javaPath"],
+                optionMap["classPath"],
+                optionMap["classReWriter"],
+                optionMap["namesFile"],
+                verbose,
+                optionMap["experimental"],
+                optionMap,
+                cbHandler);
 
-  return JNI_OK;	
+    jvmtiError error = jvmti->CreateRawMonitor("agent data", &theBigLock);
+    check_jvmti_error(jvmti, error, "Cannot create raw monitor");
+
+    setCapabilities(jvmti);
+    setEvents(jvmti);	
+    setCallbacks(jvmti);
+
+    error = jvmti->SetNativeMethodPrefix("$$ET$$");
+    check_jvmti_error(jvmti, error, "Could not set native method prefix");
+
+    // TODO error = jvmti->GetSystemProperty("ETJAR", &etjar_g);
+    // TODO check_jvmti_error(jvmti, error, "Cannot get ETJAR property value");
+    // TODO if ( etjar_g == NULL || etjar_g[0] == 0 ) {
+    // TODO     fatal_error("ERROR: ETJAR property not found\n");
+    // TODO }
+    // cerr << "ETJAR:" << etjar_g << endl;
+    // error = jvmti->AddToSystemClassLoaderSearch( (const char*)etjar_g);
+    // error = jvmti->AddToBootstrapClassLoaderSearch( (const char*)etjar_g);
+    // check_jvmti_error(jvmti, error, "Cannot add.");
+
+#ifdef LOG_PHASE_CHANGES
+    // cerr << "    Class ID for " << ETclassName << " is loaded." << endl;
+#endif
+    return JNI_OK;	
 }
 
 static void cbVMDeath (jvmtiEnv *jvmti,
@@ -720,13 +753,13 @@ static void cbVMDeath (jvmtiEnv *jvmti,
 #endif
   vmInitialized = Phase::DEAD;
   if (engageCallbacks) {
-    env->SetStaticIntField( ETclass,
+    env->SetStaticIntField( etClass_g,
                             engagedField,
                             static_cast<std::underlying_type<Phase>::type>(Phase::DEAD) );
   }
-  jmethodID deathHook = env->GetStaticMethodID(ETclass, "deathHook", "()V");
+  jmethodID deathHook = env->GetStaticMethodID(etClass_g, "deathHook", "()V");
   if (env->ExceptionOccurred() == NULL) {
-    env->CallStaticVoidMethod(ETclass, deathHook);
+    env->CallStaticVoidMethod(etClass_g, deathHook);
   } else {
     env->ExceptionClear();
   }
@@ -753,6 +786,7 @@ static void cbVMDeath (jvmtiEnv *jvmti,
   );
   cerr << "Elephant Tracks Completed." << endl;
 }   
+
 
 void setCallbacks (jvmtiEnv *jvmti) {
   jvmtiEventCallbacks callbacks;
