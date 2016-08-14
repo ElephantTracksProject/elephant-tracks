@@ -9,17 +9,17 @@ export ETDIR=/data/rveroy/pulsrc/ETRUN/lib
 export ETJAR=${ETDIR}/elephantTracksRewriter.jar
 export SIMPLEJAR=$ETDIR/../simplelist-0.1-all.jar
 # Sequential add and then sequential delete
-export TRACEFILE1=simplelist-seq-seqdel.trace
-export NAMEFILE1=simplelist-seq-seqdel.names
-# Random add and then sequential delete
-export TRACEFILE2=simplelist-rand-seqdel.trace
-export NAMEFILE2=simplelist-rand-seqdel.names
+export SEQ_SEQFILE=simplelist-seq-seqdel.trace
+export SEQ_SEQ_NAMEFILE=simplelist-seq-seqdel.names
 # Sequential add and then delete all at end
-export TRACEFILE3=simplelist-seq-enddel.trace
-export NAMEFILE3=simplelist-seq-enddel.names
+export SEQ_ENDDELFILE=simplelist-seq-enddel.trace
+export SEQ_ENDDEL_NAMEFILE=simplelist-seq-enddel.names
+# Random add and then sequential delete
+export RAND_SEQDELFILE=simplelist-rand-seqdel.trace
+export RAND_SEQDEL_NAMEFILE=simplelist-rand-seqdel.names
 # Random add and then delete all at end
-export TRACEFILE4=simplelist-rand-enddel.trace
-export NAMEFILE4=simplelist-rand-enddel.names
+export RAND_ENDDELFILE=simplelist-rand-enddel.trace
+export RAND_ENDDEL_NAMEFILE=simplelist-rand-enddel.names
 
 export LD_LIBRARY_PATH=$ETDIR:$LD_LIBRARY_PATH
 
@@ -39,56 +39,57 @@ scratchdir="scratch-${OFILE}"
 
 echo "====[ 1: SEQ - SEQ DEL ]================================================"
 # Case 1: Sequential create/ Sequential (one by one) delete
-exec_string="LD_LIBRARY_PATH=${ETDIR}:${LD_LIBRARY_PATH} CLASSPATH=.:${ASMJAR}:${ETDIR}:${ETDIR}/*  ${JAVA_PATH}/bin/java  -DETJAR=${ETCLASSJAR}  -classpath .:${ASMJAR}:${ETDIR}  -Xbootclasspath/a:${ETDIR}  -agentlib:ElephantTracks=:=@traceFile=${TRACEFILE1}@namesFile=${NAMEFILE1}@-XechoArgs@optionsFile=./etconfig@-Xdefault=OW -jar ${SIMPLEJAR} 1000 1 seq seqdel node"
+exec_string="LD_LIBRARY_PATH=${ETDIR}:${LD_LIBRARY_PATH} CLASSPATH=.:${ASMJAR}:${ETDIR}:${ETDIR}/*  ${JAVA_PATH}/bin/java  -DETJAR=${ETCLASSJAR}  -classpath .:${ASMJAR}:${ETDIR}  -Xbootclasspath/a:${ETDIR}  -agentlib:ElephantTracks=:=@traceFile=${SEQ_SEQFILE}@namesFile=${SEQ_SEQ_NAMEFILE}@-XechoArgs@optionsFile=./etconfig@-Xdefault=OW -jar ${SIMPLEJAR} 5 1 seq seqdel node"
 
 echo $exec_string
 eval $exec_string
 
-if [ -f ${TRACEFILE1}".bz2" ]
+if [ -f ${SEQ_SEQFILE}".bz2" ]
 then
-    rm -vf ${TRACEFILE1}".bz2"
+    rm -vf ${SEQ_SEQFILE}".bz2"
 fi
 echo "bzipping..."
-bzip2 -1 ${TRACEFILE1} &
+bzip2 -1 ${SEQ_SEQFILE} &
 
-echo "====[ 2: RANDOM - SEQ DEL ]============================================="
-# Case 2: Random create/ Sequential (one by one) delete
-exec_string="LD_LIBRARY_PATH=${ETDIR}:${LD_LIBRARY_PATH} CLASSPATH=.:${ASMJAR}:${ETDIR}:${ETDIR}/*  ${JAVA_PATH}/bin/java  -DETJAR=${ETCLASSJAR}  -classpath .:${ASMJAR}:${ETDIR}  -Xbootclasspath/a:${ETDIR}  -agentlib:ElephantTracks=:=@traceFile=${TRACEFILE2}@namesFile=${NAMEFILE2}@-XechoArgs@optionsFile=./etconfig@-Xdefault=OW -jar ${SIMPLEJAR} 1000 1 random seqdel node"
+# echo "====[ 2: SEQ - ATEND ]=================================================="
+# Case 2: Sequential create/ At end delete
+exec_string="LD_LIBRARY_PATH=${ETDIR}:${LD_LIBRARY_PATH} CLASSPATH=.:${ASMJAR}:${ETDIR}:${ETDIR}/*  ${JAVA_PATH}/bin/java  -DETJAR=${ETCLASSJAR}  -classpath .:${ASMJAR}:${ETDIR}  -Xbootclasspath/a:${ETDIR}  -agentlib:ElephantTracks=:=@traceFile=${SEQ_ENDDELFILE}@namesFile=${SEQ_ENDDEL_NAMEFILE}@-XechoArgs@optionsFile=./etconfig@-Xdefault=OW -jar ${SIMPLEJAR} 5 1 seq atend node"
 
 echo $exec_string
 eval $exec_string
 
-if [ -f ${TRACEFILE2}".bz2" ]
+if [ -f ${SEQ_ENDDELFILE}".bz2" ]
 then
-    rm -vf ${TRACEFILE2}".bz2"
+    rm -vf ${SEQ_ENDDELFILE}".bz2"
 fi
 echo "bzipping..."
-bzip2 -1 ${TRACEFILE2} &
+bzip2 -1 ${SEQ_ENDDELFILE} &
 
-echo "====[ 3: SEQ - ATEND ]=================================================="
-# Case 3: Sequential create/ At end delete
-exec_string="LD_LIBRARY_PATH=${ETDIR}:${LD_LIBRARY_PATH} CLASSPATH=.:${ASMJAR}:${ETDIR}:${ETDIR}/*  ${JAVA_PATH}/bin/java  -DETJAR=${ETCLASSJAR}  -classpath .:${ASMJAR}:${ETDIR}  -Xbootclasspath/a:${ETDIR}  -agentlib:ElephantTracks=:=@traceFile=${TRACEFILE3}@namesFile=${NAMEFILE3}@-XechoArgs@optionsFile=./etconfig@-Xdefault=OW -jar ${SIMPLEJAR} 1000 1 seq atend node"
 
-echo $exec_string
-eval $exec_string
-
-if [ -f ${TRACEFILE3}".bz2" ]
-then
-    rm -vf ${TRACEFILE3}".bz2"
-fi
-echo "bzipping..."
-bzip2 -1 ${TRACEFILE3} &
-
-echo "====[ 4: RANDOM - ATEND ]==============================================="
-# Case 3: Sequential create/ At end delete
-exec_string="LD_LIBRARY_PATH=${ETDIR}:${LD_LIBRARY_PATH} CLASSPATH=.:${ASMJAR}:${ETDIR}:${ETDIR}/*  ${JAVA_PATH}/bin/java  -DETJAR=${ETCLASSJAR}  -classpath .:${ASMJAR}:${ETDIR}  -Xbootclasspath/a:${ETDIR}  -agentlib:ElephantTracks=:=@traceFile=${TRACEFILE4}@namesFile=${NAMEFILE4}@-XechoArgs@optionsFile=./etconfig@-Xdefault=OW -jar ${SIMPLEJAR} 1000 1 random atend node"
-
-echo $exec_string
-eval $exec_string
-
-if [ -f ${TRACEFILE4}".bz2" ]
-then
-    rm -vf ${TRACEFILE4}".bz2"
-fi
-echo "bzipping..."
-bzip2 -1 ${TRACEFILE4} &
+# TODO echo "====[ 3: RANDOM - SEQ DEL ]============================================="
+# TODO # Case 3: Random create/ Sequential (one by one) delete
+# TODO exec_string="LD_LIBRARY_PATH=${ETDIR}:${LD_LIBRARY_PATH} CLASSPATH=.:${ASMJAR}:${ETDIR}:${ETDIR}/*  ${JAVA_PATH}/bin/java  -DETJAR=${ETCLASSJAR}  -classpath .:${ASMJAR}:${ETDIR}  -Xbootclasspath/a:${ETDIR}  -agentlib:ElephantTracks=:=@traceFile=${RAND_SEQDELFILE}@namesFile=${RAND_SEQDEL_NAMEFILE}@-XechoArgs@optionsFile=./etconfig@-Xdefault=OW -jar ${SIMPLEJAR} 5 1 random seqdel node"
+# TODO 
+# TODO echo $exec_string
+# TODO eval $exec_string
+# TODO 
+# TODO if [ -f ${RAND_SEQDELFILE}".bz2" ]
+# TODO then
+# TODO     rm -vf ${RAND_SEQDELFILE}".bz2"
+# TODO fi
+# TODO echo "bzipping..."
+# TODO bzip2 -1 ${RAND_SEQDELFILE} &
+# TODO 
+# TODO echo "====[ 4: RANDOM - ATEND ]==============================================="
+# TODO # Case 4: Random create/ At end delete
+# TODO exec_string="LD_LIBRARY_PATH=${ETDIR}:${LD_LIBRARY_PATH} CLASSPATH=.:${ASMJAR}:${ETDIR}:${ETDIR}/*  ${JAVA_PATH}/bin/java  -DETJAR=${ETCLASSJAR}  -classpath .:${ASMJAR}:${ETDIR}  -Xbootclasspath/a:${ETDIR}  -agentlib:ElephantTracks=:=@traceFile=${RAND_ENDDELFILE}@namesFile=${RAND_ENDDEL_NAMEFILE}@-XechoArgs@optionsFile=./etconfig@-Xdefault=OW -jar ${SIMPLEJAR} 5 1 random atend node"
+# TODO 
+# TODO echo $exec_string
+# TODO eval $exec_string
+# TODO 
+# TODO if [ -f ${RAND_ENDDELFILE}".bz2" ]
+# TODO then
+# TODO     rm -vf ${RAND_ENDDELFILE}".bz2"
+# TODO fi
+# TODO echo "bzipping..."
+# TODO bzip2 -1 ${RAND_ENDDELFILE} &
