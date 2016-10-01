@@ -9,7 +9,6 @@ export ETDIR=/data/rveroy/pulsrc/ETRUN/lib
 export ETJAR=${ETDIR}/elephantTracksRewriter.jar
 export DACAPOJAR=/data/rveroy/pulsrc/dacapo-9.12-bach.jar
 
-# Sequential add and then sequential delete
 export TRACEFILE=avrora.trace
 export NAMESFILE=avrora.names
 
