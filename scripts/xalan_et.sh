@@ -26,7 +26,8 @@ ET_CLASS_PATH=${ETDIR}:${ETJAR}:${ASMJAR}
 export JAVA_PATH=$ET_JAVA_PATH
 
 echo "====[ XALAN ]==========================================================="
-exec_string="LD_LIBRARY_PATH=${ETDIR}:${LD_LIBRARY_PATH} CLASSPATH=.:${ASMJAR}:${ETDIR}:${ETDIR}/*  ${ET_JAVA_PATH}/bin/java  -DETJAR=${ETJAR}  -classpath .:${ASMJAR}:${ETDIR}  -Xbootclasspath/a:${ETDIR}  -agentlib:ElephantTracks=:=@traceFile=${XALAN}@namesFile=${XALAN_NAMES}@-XechoArgs@optionsFile=./etconfig@-Xdefault=OW -jar ${DACAPOJAR} xalan"
+# exec_string="LD_LIBRARY_PATH=${ETDIR}:${LD_LIBRARY_PATH} CLASSPATH=.:${ASMJAR}:${ETDIR}:${ETDIR}/*  ${ET_JAVA_PATH}/bin/java  -DETJAR=${ETJAR}  -classpath .:${ASMJAR}:${ETDIR}  -Xbootclasspath/a:${ETDIR}  -agentlib:ElephantTracks=:=@traceFile=${XALAN}@namesFile=${XALAN_NAMES}@-XechoArgs@optionsFile=./etconfig@-Xdefault=OW -jar ${DACAPOJAR} xalan"
+exec_string="${ET_JAVA_PATH}/bin/java  -DETJAR=${ETJAR}  -classpath .:${ASMJAR}:${ETDIR}  -Xbootclasspath/a:${ETDIR}  -agentlib:ElephantTracks=:=@traceFile=${XALAN}@namesFile=${XALAN_NAMES}@-XechoArgs@optionsFile=./etconfig@-Xdefault=OW -jar ${DACAPOJAR} xalan"
 
 echo $exec_string
 eval $exec_string
