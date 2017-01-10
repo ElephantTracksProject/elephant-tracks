@@ -14,7 +14,7 @@ ASMJAR = /data/rveroy/src/JAR/asm-all-3.3.jar
 #
 # Seems that there's a bug when running ET with Hotspot, so
 # we're going to use IBM's J9 here (version 1.6)
-JAVA_PATH = /data/rveroy/src/ibm-java-x86_64-60
+JAVA_PATH = /usr/lib/jvm/ibm-java-x86_64-60
 
 #
 # JAVA_PATH for Tufts black-hole and white-hole
